@@ -1,0 +1,48 @@
+{
+  "name": "todosas-bearer-reference",
+  "version": "0.0.0",
+  "private": true,
+  "description": "OAuth 2.0 server using Express and OAuth2orize to issue reference bearer tokens.",
+  "keywords": [
+    "example",
+    "express",
+    "oauth2orize",
+    "passport",
+    "sqlite"
+  ],
+  "author": {
+    "name": "Jared Hanson",
+    "email": "jaredhanson@gmail.com",
+    "url": "https://www.jaredhanson.me/"
+  },
+  "homepage": "https://github.com/oauth2orize/todosas-bearer-reference",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/oauth2orize/todosas-bearer-reference.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oauth2orize/todosas-bearer-reference/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/jaredhanson"
+  },
+  "license": "Unlicense",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "debug": "~2.6.9",
+    "ejs": "~2.6.1",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "mkdirp": "^1.0.4",
+    "morgan": "~1.9.1",
+    "oauth2orize": "^1.11.0",
+    "passport": "^0.5.2",
+    "passport-http": "^0.3.0",
+    "passport-http-bearer": "^1.0.1",
+    "passport-oauth2-client-password": "^0.1.2",
+    "sqlite3": "^5.0.2"
+  }
+}
