@@ -32,6 +32,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "@oauth2orize-examples/userinfoapi-bearer": "git+https://github.com/oauth2orize/userinfoapi-bearer.git",
     "dateformat": "^4.6.3",
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
@@ -44,7 +45,6 @@
     "passport-http": "^0.3.0",
     "passport-http-bearer": "^1.0.1",
     "passport-oauth2-client-password": "^0.1.2",
-    "sqlite3": "^5.0.2",
-    "userinfoapi-bearer": "git+https://github.com/oauth2orize/userinfoapi-bearer.git"
+    "sqlite3": "^5.0.2"
   }
 }
