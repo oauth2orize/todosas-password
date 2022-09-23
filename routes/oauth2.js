@@ -8,6 +8,8 @@ var dateFormat = require('dateformat');
 var db = require('../db');
 
 
+exports = module.exports = function() {
+
 function verify(clientID, clientSecret, cb) {
   db.get('SELECT * FROM clients WHERE id = ?', [ clientID ], function(err, row) {
     if (err) { return next(err); }
@@ -76,4 +78,6 @@ router.post('/token',
   as.token(),
   as.errorHandler());
 
-module.exports = router;
+return router;
+
+};
