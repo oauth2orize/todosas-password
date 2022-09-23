@@ -8,10 +8,10 @@ var dateFormat = require('dateformat');
 var db = require('../db');
 
 
-exports = module.exports = function() {
+exports = module.exports = function(usersDB, oauth2DB) {
 
   function verify(clientID, clientSecret, cb) {
-    db.get('SELECT * FROM clients WHERE id = ?', [ clientID ], function(err, row) {
+    oauth2DB.get('SELECT * FROM clients WHERE id = ?', [ clientID ], function(err, row) {
       if (err) { return next(err); }
       if (!row) { return cb(null, false); }
       if (!crypto.timingSafeEqual(Buffer.from(row.secret), Buffer.from(clientSecret))) {
@@ -39,7 +39,7 @@ exports = module.exports = function() {
     console.log(password);
     console.log(scope)
   
-    db.get('SELECT * FROM users WHERE username = ?', [ username ], function(err, row) {
+    usersDB.get('SELECT * FROM users WHERE username = ?', [ username ], function(err, row) {
       if (err) { return cb(err); }
       if (!row) { return cb(null, false); }
     
@@ -54,7 +54,7 @@ exports = module.exports = function() {
           var accessToken = buffer.toString('base64');
           var expiresAt = new Date(Date.now() + 3600000); // 1 hour from now
       
-          db.run('INSERT INTO access_tokens (user_id, client_id, scope, expires_at, token) VALUES (?, ?, ?, ?, ?)', [
+          oauth2DB.run('INSERT INTO access_tokens (user_id, client_id, scope, expires_at, token) VALUES (?, ?, ?, ?, ?)', [
             row.id,
             '1', //row.client_id, // FIXME: add a proper client id here with public client auth
             [ 'profile' ].join(' '),
@@ -79,5 +79,4 @@ exports = module.exports = function() {
     as.errorHandler());
 
   return router;
-
 };
