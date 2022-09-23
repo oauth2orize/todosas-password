@@ -1,7 +1,6 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var passport = require('passport');
 var logger = require('morgan');
 var db = require('./db');
 
@@ -10,14 +9,9 @@ var userinfoRouter = require('@oauth2orize-examples/userinfoapi-bearer')(db, db)
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
   console.log('# ' + req.method + ' ' + req.url)
   console.log(req.headers)
