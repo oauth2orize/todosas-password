@@ -3,8 +3,10 @@ var express = require('express');
 var path = require('path');
 var passport = require('passport');
 var logger = require('morgan');
+var db = require('./db');
 
 var oauth2Router = require('./routes/oauth2');
+var userinfoRouter = require('userinfoapi-bearer')(db, db);
 
 var app = express();
 
@@ -24,6 +26,7 @@ app.use(function(req, res, next) {
 });
 
 app.use('/oauth2', oauth2Router);
+app.use('/openidconnect', userinfoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

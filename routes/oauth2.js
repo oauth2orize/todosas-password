@@ -55,7 +55,7 @@ as.exchange(oauth2orize.exchange.password(function issue(client, username, passw
         db.run('INSERT INTO access_tokens (user_id, client_id, scope, expires_at, token) VALUES (?, ?, ?, ?, ?)', [
           row.id,
           '1', //row.client_id, // FIXME: add a proper client id here with public client auth
-          scope,
+          [ 'profile' ].join(' '),
           dateFormat(expiresAt, 'yyyy-mm-dd HH:MM:ss', true),
           accessToken,
         ], function(err) {
