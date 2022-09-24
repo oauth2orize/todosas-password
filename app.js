@@ -4,8 +4,8 @@ var path = require('path');
 var logger = require('morgan');
 var db = require('./db');
 
-var oauth2Router = require('./routes/oauth2')(db, db);
-var userinfoRouter = require('@oauth2orize-examples/userinfoapi-bearer')(db, db);
+var oauth2Router = require('./routes/oauth2')(db.usersDB, db.usersDB);
+var userinfoRouter = require('@oauth2orize-examples/userinfoapi-bearer')(db.usersDB, db.usersDB);
 
 var app = express();
 

@@ -6,8 +6,6 @@ var OAuth2ClientPasswordStrategy = require('passport-oauth2-client-password');
 var OAuth2ClientPublicStrategy = require('passport-oauth2-client-public');
 var crypto = require('crypto');
 var dateFormat = require('dateformat');
-var db = require('../db');
-
 
 exports = module.exports = function(usersDB, oauth2DB) {
 
@@ -86,6 +84,7 @@ exports = module.exports = function(usersDB, oauth2DB) {
       });
     });
   }));
+
 
   var router = express.Router();
 

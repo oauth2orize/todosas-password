@@ -81,4 +81,4 @@ db.serialize(function() {
   ]);
 });
 
-module.exports = db;
+exports.usersDB = db;
