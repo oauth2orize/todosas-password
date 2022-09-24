@@ -47,12 +47,6 @@ exports = module.exports = function(usersDB, oauth2DB) {
   var as = oauth2orize.createServer();
 
   as.exchange(oauth2orize.exchange.password(function issue(client, username, password, scope, cb) {
-    console.log('EXHANGE');
-    console.log(client);
-    console.log(username);
-    console.log(password);
-    console.log(scope)
-  
     usersDB.get('SELECT * FROM users WHERE username = ?', [ username ], function(err, row) {
       if (err) { return cb(err); }
       if (!row) { return cb(null, false); }
@@ -66,11 +60,11 @@ exports = module.exports = function(usersDB, oauth2DB) {
         crypto.randomBytes(64, function(err, buffer) {
           if (err) { return cb(err); }
           var accessToken = buffer.toString('base64');
-          var expiresAt = new Date(Date.now() + 3600000); // 1 hour from now
+          var expiresAt = new Date(Date.now() + 7200000); // 2 hours from now
       
           oauth2DB.run('INSERT INTO access_tokens (user_id, client_id, scope, expires_at, token) VALUES (?, ?, ?, ?, ?)', [
             row.id,
-            '1', //row.client_id, // FIXME: add a proper client id here with public client auth
+            client.id,
             [ 'profile' ].join(' '),
             dateFormat(expiresAt, 'yyyy-mm-dd HH:MM:ss', true),
             accessToken,
