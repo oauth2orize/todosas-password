@@ -26,8 +26,9 @@ exports = module.exports = function(usersDB, oauth2DB) {
     });
   };
 
-  passport.use(new HTTPBasicStrategy(verify));
-  passport.use(new OAuth2ClientPasswordStrategy(verify));
+  var authenticator = new passport.Authenticator();
+  authenticator.use(new HTTPBasicStrategy(verify));
+  authenticator.use(new OAuth2ClientPasswordStrategy(verify));
 
 
   var as = oauth2orize.createServer();
@@ -74,7 +75,7 @@ exports = module.exports = function(usersDB, oauth2DB) {
   var router = express.Router();
 
   router.post('/token',
-    //passport.authenticate(['basic', 'oauth2-client-password'], { session: false }),
+    authenticator.authenticate(['basic', 'oauth2-client-password'], { session: false, failWithError: true }),
     as.token(),
     as.errorHandler());
 
