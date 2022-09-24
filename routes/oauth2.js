@@ -3,6 +3,7 @@ var oauth2orize = require('oauth2orize');
 var passport = require('passport');
 var HTTPBasicStrategy = require('passport-http').BasicStrategy;
 var OAuth2ClientPasswordStrategy = require('passport-oauth2-client-password');
+var OAuth2ClientPublicStrategy = require('passport-oauth2-client-public');
 var crypto = require('crypto');
 var dateFormat = require('dateformat');
 var db = require('../db');
@@ -14,6 +15,7 @@ exports = module.exports = function(usersDB, oauth2DB) {
     oauth2DB.get('SELECT * FROM clients WHERE id = ?', [ clientID ], function(err, row) {
       if (err) { return next(err); }
       if (!row) { return cb(null, false); }
+      if (!row.secret) { return cb(null, false); }
       if (!crypto.timingSafeEqual(Buffer.from(row.secret), Buffer.from(clientSecret))) {
         return cb(null, false);
       }
@@ -29,6 +31,19 @@ exports = module.exports = function(usersDB, oauth2DB) {
   var authenticator = new passport.Authenticator();
   authenticator.use(new HTTPBasicStrategy(verify));
   authenticator.use(new OAuth2ClientPasswordStrategy(verify));
+  authenticator.use(new OAuth2ClientPublicStrategy(function verify(clientID, cb) {
+    oauth2DB.get('SELECT * FROM clients WHERE id = ?', [ clientID ], function(err, row) {
+      if (err) { return next(err); }
+      if (!row) { return cb(null, false); }
+      if (row.secret) { return cb(null, false); }
+      var client = {
+        id: row.id,
+        name: row.name,
+        redirectURI: row.redirect_uri
+      };
+      return cb(null, client);
+    });
+  }));
 
 
   var as = oauth2orize.createServer();
@@ -75,7 +90,7 @@ exports = module.exports = function(usersDB, oauth2DB) {
   var router = express.Router();
 
   router.post('/token',
-    authenticator.authenticate(['basic', 'oauth2-client-password'], { session: false, failWithError: true }),
+    authenticator.authenticate(['basic', 'oauth2-client-password', 'oauth2-client-public'], { session: false, failWithError: true }),
     as.token(),
     as.errorHandler());
 
