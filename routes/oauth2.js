@@ -7,10 +7,10 @@ var OAuth2ClientPublicStrategy = require('passport-oauth2-client-public');
 var crypto = require('crypto');
 var dateFormat = require('dateformat');
 
-exports = module.exports = function(usersDB, oauth2DB) {
+exports = module.exports = function(usersDB, authzDB) {
 
   function verify(clientID, clientSecret, cb) {
-    oauth2DB.get('SELECT * FROM clients WHERE id = ?', [ clientID ], function(err, row) {
+    authzDB.get('SELECT * FROM clients WHERE id = ?', [ clientID ], function(err, row) {
       if (err) { return next(err); }
       if (!row) { return cb(null, false); }
       if (!row.secret) { return cb(null, false); }
@@ -30,7 +30,7 @@ exports = module.exports = function(usersDB, oauth2DB) {
   authenticator.use(new HTTPBasicStrategy(verify));
   authenticator.use(new OAuth2ClientPasswordStrategy(verify));
   authenticator.use(new OAuth2ClientPublicStrategy(function verify(clientID, cb) {
-    oauth2DB.get('SELECT * FROM clients WHERE id = ?', [ clientID ], function(err, row) {
+    authzDB.get('SELECT * FROM clients WHERE id = ?', [ clientID ], function(err, row) {
       if (err) { return next(err); }
       if (!row) { return cb(null, false); }
       if (row.secret) { return cb(null, false); }
@@ -59,10 +59,10 @@ exports = module.exports = function(usersDB, oauth2DB) {
       
         crypto.randomBytes(64, function(err, buffer) {
           if (err) { return cb(err); }
+          
           var accessToken = buffer.toString('base64');
           var expiresAt = new Date(Date.now() + 7200000); // 2 hours from now
-      
-          oauth2DB.run('INSERT INTO access_tokens (user_id, client_id, scope, expires_at, token) VALUES (?, ?, ?, ?, ?)', [
+          authzDB.run('INSERT INTO access_tokens (user_id, client_id, scope, expires_at, token) VALUES (?, ?, ?, ?, ?)', [
             row.id,
             client.id,
             [ 'profile' ].join(' '),
@@ -71,8 +71,12 @@ exports = module.exports = function(usersDB, oauth2DB) {
           ], function(err) {
             if (err) { return cb(err); }
       
-      
-            return cb(null, accessToken, 'rt');
+            crypto.randomBytes(64, function(err, buffer) {
+              if (err) { return cb(err); }
+              
+              var refreshToken = buffer.toString('base64');
+              return cb(null, accessToken, refreshToken);
+            });
           });
         });
       });
